@@ -1,5 +1,9 @@
 syntax: glob
 
+*.lo
+*.o
+.deps
+.dirstamp
 *~
 Makefile
 Makefile.in
