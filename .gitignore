@@ -4,6 +4,7 @@ syntax: glob
 *.o
 .deps
 .dirstamp
+.libs
 *~
 Makefile
 Makefile.in
