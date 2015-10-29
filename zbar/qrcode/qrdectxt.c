@@ -7,7 +7,46 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _HAVE_ICONV
 #include <iconv.h>
+#else
+//iconv stubs
+#define iconv_t libiconv_t
+typedef void* iconv_t;
+
+/* Allocates descriptor for code conversion from encoding ‘fromcode’ to
+   encoding ‘tocode’. */
+iconv_t iconv_open (const char* tocode, const char* fromcode){
+  return (iconv_t)1; //TODO: fix that!
+}
+
+/* Converts, using conversion descriptor ‘cd’, at most ‘*inbytesleft’ bytes
+   starting at ‘*inbuf’, writing at most ‘*outbytesleft’ bytes starting at
+   ‘*outbuf’.
+   Decrements ‘*inbytesleft’ and increments ‘*inbuf’ by the same amount.
+   Decrements ‘*outbytesleft’ and increments ‘*outbuf’ by the same amount. */
+size_t iconv (iconv_t cd,  char* * inbuf, size_t *inbytesleft, char* * outbuf, size_t *outbytesleft){
+  //dummy copy stub
+  size_t result = 0;
+  while(*inbytesleft != 0 && *outbytesleft != 0){
+    **outbuf = **inbuf;
+    *outbytesleft--;
+    *inbytesleft--;
+    *outbuf++;
+    *inbuf++;
+    
+    result++;
+  }
+  return result;
+}
+
+/* Frees resources allocated for conversion descriptor ‘cd’. */
+int iconv_close (iconv_t cd){
+  return 0;
+}
+#endif
+
 #include "qrcode.h"
 #include "qrdec.h"
 #include "util.h"

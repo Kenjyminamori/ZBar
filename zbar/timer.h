@@ -143,7 +143,8 @@ static inline int _zbar_timer_check (zbar_timer_t *timer)
     return((timer->tv_sec - now.tv_sec) * 1000 +
            (timer->tv_usec - now.tv_usec) / 1000);
 }
-
+#elif defined(HAVE_CUSTOM_TIME_H)
+#include CUSTOM_TIME_H_FILENAME
 #else
 # error "unable to find a timer interface"
 #endif

@@ -5,7 +5,7 @@
 //#define ENABLE_CODABAR 1
 
 /* whether to build support for Code 128 symbology */
-#define ENABLE_CODE128 1
+//#define ENABLE_CODE128 1
 
 /* whether to build support for Code 39 symbology */
 //#define ENABLE_CODE39 1
@@ -134,7 +134,11 @@
 #define HAVE_UINTPTR_T 1
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#define HAVE_UNISTD_H 1
+//#define HAVE_UNISTD_H 1
+
+#define HAVE_CUSTOM_TIME_H 1
+#define CUSTOM_TIME_H_FILENAME "systemTimer.h"
+
 
 /* Define to 1 if you have the <vfw.h> header file. */
 /* #undef HAVE_VFW_H */
