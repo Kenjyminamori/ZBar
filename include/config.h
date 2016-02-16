@@ -5,7 +5,7 @@
 //#define ENABLE_CODABAR 1
 
 /* whether to build support for Code 128 symbology */
-//#define ENABLE_CODE128 1
+#define ENABLE_CODE128 1
 
 /* whether to build support for Code 39 symbology */
 //#define ENABLE_CODE39 1
@@ -50,7 +50,7 @@
 /* #undef HAVE_GRAPHICSMAGICK */
 
 /* Define if you have the iconv() function and it works. */
-//#define HAVE_ICONV 1
+#define HAVE_ICONV 1
 
 /* Define to 1 to use ImageMagick */
 //#define HAVE_IMAGEMAGICK 1
@@ -125,7 +125,7 @@
 //#define HAVE_SYS_TIMES_H 1
 
 /* Define to 1 if you have the <sys/time.h> header file. */
-//#define HAVE_SYS_TIME_H 1
+#define HAVE_SYS_TIME_H 1
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 //#define HAVE_SYS_TYPES_H 1
@@ -150,7 +150,7 @@
 /* #undef HAVE_X11_EXTENSIONS_XVLIB_H */
 
 /* Define as const if the declaration of iconv() needs const. */
-#define ICONV_CONST 
+#define ICONV_CONST
 
 /* Library major version */
 #define LIB_VERSION_MAJOR 0
@@ -248,4 +248,3 @@
 #ifndef X_DISPLAY_MISSING
 # define HAVE_X
 #endif
-

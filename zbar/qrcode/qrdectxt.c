@@ -8,24 +8,24 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _HAVE_ICONV
+#ifdef HAVE_ICONV
 #include <iconv.h>
 #else
 //iconv stubs
 #define iconv_t libiconv_t
 typedef void* iconv_t;
 
-/* Allocates descriptor for code conversion from encoding ‘fromcode’ to
-   encoding ‘tocode’. */
+/* Allocates descriptor for code conversion from encoding Â‘fromcodeÂ’ to
+   encoding Â‘tocodeÂ’. */
 iconv_t iconv_open (const char* tocode, const char* fromcode){
   return (iconv_t)1; //TODO: fix that!
 }
 
-/* Converts, using conversion descriptor ‘cd’, at most ‘*inbytesleft’ bytes
-   starting at ‘*inbuf’, writing at most ‘*outbytesleft’ bytes starting at
-   ‘*outbuf’.
-   Decrements ‘*inbytesleft’ and increments ‘*inbuf’ by the same amount.
-   Decrements ‘*outbytesleft’ and increments ‘*outbuf’ by the same amount. */
+/* Converts, using conversion descriptor Â‘cdÂ’, at most Â‘*inbytesleftÂ’ bytes
+   starting at Â‘*inbufÂ’, writing at most Â‘*outbytesleftÂ’ bytes starting at
+   Â‘*outbufÂ’.
+   Decrements Â‘*inbytesleftÂ’ and increments Â‘*inbufÂ’ by the same amount.
+   Decrements Â‘*outbytesleftÂ’ and increments Â‘*outbufÂ’ by the same amount. */
 size_t iconv (iconv_t cd,  char* * inbuf, size_t *inbytesleft, char* * outbuf, size_t *outbytesleft){
   //dummy copy stub
   size_t result = 0;
@@ -41,7 +41,7 @@ size_t iconv (iconv_t cd,  char* * inbuf, size_t *inbytesleft, char* * outbuf, s
   return result;
 }
 
-/* Frees resources allocated for conversion descriptor ‘cd’. */
+/* Frees resources allocated for conversion descriptor Â‘cdÂ’. */
 int iconv_close (iconv_t cd){
   return 0;
 }
