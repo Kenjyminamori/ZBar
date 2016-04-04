@@ -10,6 +10,13 @@ LT_PREREQ([2.2])
 
 dnl programs
 
+AM_CPPFLAGS="-I$srcdir/include"
+AM_CFLAGS="-Wall -Wno-parentheses -Werror"
+AM_CXXFLAGS="$AM_CFLAGS"
+AC_SUBST([AM_CPPFLAGS])
+AC_SUBST([AM_CFLAGS])
+AC_SUBST([AM_CXXFLAGS])
+
 AC_PROG_CC
 AM_PROG_CC_C_O
 AC_PROG_CXX
@@ -53,13 +60,6 @@ AC_DEFINE_UNQUOTED([LIB_VERSION_MINOR], [[$age]],
 AC_DEFINE_UNQUOTED([LIB_VERSION_REVISION],
   [[`echo "$LIB_VERSION" | sed -e 's/^[^:]*:\([^:]*\):.*$/\1/'`]],
   [Library revision])
-
-AM_CPPFLAGS="-I$srcdir/include"
-AM_CFLAGS="-Wall -Wno-parentheses -Werror"
-AM_CXXFLAGS="$AM_CFLAGS"
-AC_SUBST([AM_CPPFLAGS])
-AC_SUBST([AM_CFLAGS])
-AC_SUBST([AM_CXXFLAGS])
 
 dnl windows build
 
