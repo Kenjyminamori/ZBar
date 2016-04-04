@@ -244,9 +244,28 @@ static int v4l2_mmap_buffers (zbar_video_t *vdo)
 static int v4l2_set_format (zbar_video_t *vdo,
                             uint32_t fmt)
 {
+	struct v4l2_format gfmt;
+	struct v4l2_pix_format *pix = &gfmt.fmt.pix;
+	memset(&gfmt, 0, sizeof(gfmt));
+	gfmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
+	if(ioctl(vdo->fd, VIDIOC_G_FMT, &gfmt) < 0)
+		return(err_capture(vdo, SEV_ERROR, ZBAR_ERR_SYSTEM, __func__,
+						   "querying current video format (VIDIO_G_FMT)"));
+
+	zprintf(1, "current format: %.4s(%08x) %u x %u%s (line=0x%x size=0x%x)\n",
+			(char*)&pix->pixelformat, pix->pixelformat,
+			pix->width, pix->height,
+			(pix->field != V4L2_FIELD_NONE) ? " INTERLACED" : "",
+			pix->bytesperline, pix->sizeimage);
+
+	if(pix->width == vdo->width && pix->height == vdo->height)
+		return(0);
+
+	zprintf(1, "setting requested size: %d x %d\n", vdo->width, vdo->height);
+
     struct v4l2_format vfmt;
     struct v4l2_pix_format *vpix = &vfmt.fmt.pix;
-    memset(&vfmt, 0, sizeof(vfmt));
+    memcpy(&vfmt, &gfmt, sizeof(vfmt));
     vfmt.type = V4L2_BUF_TYPE_VIDEO_CAPTURE;
     vpix->width = vdo->width;
     vpix->height = vdo->height;
