@@ -625,8 +625,7 @@ static void zbar_gtk_init (ZBarGtk *self)
 
     /* spawn a thread to handle decoding and video */
     zbar->queue = g_async_queue_new();
-    zbar->thread = g_thread_create(zbar_gtk_processing_thread, self,
-                                    FALSE, NULL);
+    zbar->thread = g_thread_new("capture", zbar_gtk_processing_thread, self);
     g_assert(zbar->thread);
 }
 
