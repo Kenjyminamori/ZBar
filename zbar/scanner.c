@@ -34,11 +34,6 @@
 #endif
 #include "debug.h"
 
-#ifndef USE_DBPRINTF
-#undef dbprintf
-#define dbprintf(...)
-#endif
-
 #ifndef ZBAR_FIXED
 # define ZBAR_FIXED 5
 #endif
