@@ -27,7 +27,8 @@
 #include <zbar.h>
 
 #ifdef DEBUG_QR_FINDER
-# define DEBUG_LEVEL (DEBUG_QR_FINDER)
+#undef DEBUG_LEVEL
+# define DEBUG_LEVEL 2
 #endif
 #include "debug.h"
 #include "decoder.h"

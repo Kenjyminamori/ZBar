@@ -30,7 +30,8 @@
 #include "svg.h"
 
 #ifdef DEBUG_SCANNER
-# define DEBUG_LEVEL (DEBUG_SCANNER)
+#undef DEBUG_LEVEL
+# define DEBUG_LEVEL 1
 #endif
 #include "debug.h"
 
@@ -128,7 +129,7 @@ static inline unsigned calc_thresh (zbar_scanner_t *scn)
     register unsigned long t;
 	register unsigned width = scn->width;
     if((thresh <= ZBAR_SCANNER_THRESH_MIN) || !width) {
-        dbprintf(1, " tmin=%d", ZBAR_SCANNER_THRESH_MIN);
+        //dbprintf(1, " tmin=%d", ZBAR_SCANNER_THRESH_MIN);
         return(ZBAR_SCANNER_THRESH_MIN);
     }
     /* slowly return threshold to min */
@@ -244,8 +245,8 @@ zbar_symbol_type_t zbar_scan_y (zbar_scanner_t *scn,
     y2_1 = y0_0 - (y0_1 * 2) + y0_2;
     y2_2 = y0_1 - (y0_2 * 2) + y0_3;
 
-    dbprintf(1, "scan: x=%d y=%d y0=%d y1=%d y2=%d",
-             x, y, y0_1, y1_1, y2_1);
+    //dbprintf(1, "scan: x=%d y=%d y0=%d y1=%d y2=%d",
+     //        x, y, y0_1, y1_1, y2_1);
 
     edge = ZBAR_NONE;
     /* 2nd zero-crossing is 1st local min/max - could be edge */
@@ -282,8 +283,8 @@ zbar_symbol_type_t zbar_scan_y (zbar_scanner_t *scn,
             dbprintf(1, "\n");
         }
     }
-    else
-        dbprintf(1, "\n");
+    //else
+      //  dbprintf(1, "\n");
     /* FIXME add fall-thru pass to decoder after heuristic "idle" period
        (eg, 6-8 * last width) */
     scn->x = x + 1;
