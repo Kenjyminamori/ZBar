@@ -129,16 +129,17 @@ zbar_color_t zbar_scanner_get_color (const zbar_scanner_t *scn)
 static inline unsigned calc_thresh (zbar_scanner_t *scn)
 {
     /* threshold 1st to improve noise rejection */
-    unsigned dx, thresh = scn->y1_thresh;
-    unsigned long t;
-    if((thresh <= ZBAR_SCANNER_THRESH_MIN) || !scn->width) {
+    register unsigned dx, thresh = scn->y1_thresh;
+    register unsigned long t;
+	register unsigned width = scn->width;
+    if((thresh <= ZBAR_SCANNER_THRESH_MIN) || !width) {
         dbprintf(1, " tmin=%d", ZBAR_SCANNER_THRESH_MIN);
         return(ZBAR_SCANNER_THRESH_MIN);
     }
     /* slowly return threshold to min */
     dx = (scn->x << ZBAR_FIXED) - scn->last_edge;
     t = thresh * dx;
-    t /= scn->width;
+    t /= width;
     t /= ZBAR_SCANNER_THRESH_FADE;
     dbprintf(1, " thr=%d t=%ld x=%d last=%d.%d (%d)",
              thresh, t, scn->x, scn->last_edge >> ZBAR_FIXED,
