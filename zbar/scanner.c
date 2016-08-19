@@ -68,7 +68,6 @@
 /* scanner state */
 struct zbar_scanner_s {
     zbar_decoder_t *decoder; /* associated bar width decoder */
-    unsigned y1_min_thresh; /* minimum threshold */
 
     unsigned x;             /* relative scan position of next sample */
     int y0[4];              /* short circular buffer of average intensities */
@@ -85,7 +84,6 @@ zbar_scanner_t *zbar_scanner_create (zbar_decoder_t *dcode)
 {
     zbar_scanner_t *scn = malloc(sizeof(zbar_scanner_t));
     scn->decoder = dcode;
-    scn->y1_min_thresh = ZBAR_SCANNER_THRESH_MIN;
     zbar_scanner_reset(scn);
     return(scn);
 }
@@ -98,7 +96,7 @@ void zbar_scanner_destroy (zbar_scanner_t *scn)
 zbar_symbol_type_t zbar_scanner_reset (zbar_scanner_t *scn)
 {
     memset(&scn->x, 0, sizeof(zbar_scanner_t) - offsetof(zbar_scanner_t, x));
-    scn->y1_thresh = scn->y1_min_thresh;
+    scn->y1_thresh = ZBAR_SCANNER_THRESH_MIN;
     if(scn->decoder)
         zbar_decoder_reset(scn->decoder);
     return(ZBAR_NONE);
@@ -133,9 +131,9 @@ static inline unsigned calc_thresh (zbar_scanner_t *scn)
     /* threshold 1st to improve noise rejection */
     unsigned dx, thresh = scn->y1_thresh;
     unsigned long t;
-    if((thresh <= scn->y1_min_thresh) || !scn->width) {
-        dbprintf(1, " tmin=%d", scn->y1_min_thresh);
-        return(scn->y1_min_thresh);
+    if((thresh <= ZBAR_SCANNER_THRESH_MIN) || !scn->width) {
+        dbprintf(1, " tmin=%d", ZBAR_SCANNER_THRESH_MIN);
+        return(ZBAR_SCANNER_THRESH_MIN);
     }
     /* slowly return threshold to min */
     dx = (scn->x << ZBAR_FIXED) - scn->last_edge;
@@ -147,11 +145,11 @@ static inline unsigned calc_thresh (zbar_scanner_t *scn)
              scn->last_edge & ((1 << ZBAR_FIXED) - 1), dx);
     if(thresh > t) {
         thresh -= t;
-        if(thresh > scn->y1_min_thresh)
+        if(thresh > ZBAR_SCANNER_THRESH_MIN)
             return(thresh);
     }
-    scn->y1_thresh = scn->y1_min_thresh;
-    return(scn->y1_min_thresh);
+    scn->y1_thresh = ZBAR_SCANNER_THRESH_MIN;
+    return(ZBAR_SCANNER_THRESH_MIN);
 }
 
 static inline zbar_symbol_type_t process_edge (zbar_scanner_t *scn,
@@ -212,7 +210,7 @@ zbar_symbol_type_t zbar_scanner_new_scan (zbar_scanner_t *scn)
 
     /* reset scanner and associated decoder */
     memset(&scn->x, 0, sizeof(zbar_scanner_t) - offsetof(zbar_scanner_t, x));
-    scn->y1_thresh = scn->y1_min_thresh;
+    scn->y1_thresh = ZBAR_SCANNER_THRESH_MIN;
     if(scn->decoder)
         zbar_decoder_new_scan(scn->decoder);
     return(edge);
@@ -273,8 +271,8 @@ zbar_symbol_type_t zbar_scan_y (zbar_scanner_t *scn,
             /* start at multiple of new min/max */
             scn->y1_thresh = (abs(y1_1) * THRESH_INIT + ROUND) >> ZBAR_FIXED;
             dbprintf(1, "\tthr=%d", scn->y1_thresh);
-            if(scn->y1_thresh < scn->y1_min_thresh)
-                scn->y1_thresh = scn->y1_min_thresh;
+            if(scn->y1_thresh < ZBAR_SCANNER_THRESH_MIN)
+                scn->y1_thresh = ZBAR_SCANNER_THRESH_MIN;
 
             /* update current edge */
             d = y2_1 - y2_2;
