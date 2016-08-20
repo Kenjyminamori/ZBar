@@ -29,7 +29,7 @@
 #include <zbar.h>
 #include "svg.h"
 
-#include <math.h>
+#define USE_FLOAT
 
 #ifdef DEBUG_SCANNER
 #undef DEBUG_LEVEL
@@ -75,7 +75,6 @@ struct zbar_scanner_s {
 
     unsigned x;             /* relative scan position of next sample */
     int y0[4];              /* short circular buffer of average intensities */
-    float y0f[4];
 
     int y1_sign;            /* slope at last crossing */
     unsigned y1_thresh;     /* current slope threshold */
@@ -90,8 +89,6 @@ void dump_avg(const zbar_scanner_t *scn){
     for(int i =0; i < 3; i++){
         dbprintf(1, " y0i[%d]=%d\n",
                  i, scn->y0[i & 3]);
-        dbprintf(1, " y0f[%d]=%f\n",
-                 i, scn->y0f[i & 3]);
     }
     dbprintf(1, "^^^\n");
 }
@@ -241,11 +238,8 @@ zbar_symbol_type_t zbar_scan_y (zbar_scanner_t *scn,
     register int x = scn->x;
 
     register int y0_1  = scn->y0[(x - 1) & 3];
-    float        y0_1f = scn->y0f[(x - 1) & 3];
     register int y0_0 = y0_1;
-    float y0_0f = y0_1f;
     register int y0_2, y0_3, y1_1, y2_1, y2_2;
-    float y0_2f, y0_3f, y1_1f;//, y2_1f, y2_2f;
 
     zbar_symbol_type_t edge;
     dbprintf(1, " y=%d\n", y);
@@ -257,49 +251,35 @@ zbar_symbol_type_t zbar_scan_y (zbar_scanner_t *scn,
 
     dbprintf(1, " y0f[%d]=%.5f\n",
              x & 3, scn->y0f[x & 3]);*/
-    //dump_avg(scn);
-
     if(x) {
         /* update weighted moving average */
-        //dbprintf(1, "EWMA_WEIGHT" PR_FIXED_FMT "\n",
-          //       FIXED_TO_FLOAT(EWMA_WEIGHT));
+#ifndef USE_FLOAT
         y0_0 += ((int)((y - y0_1) * EWMA_WEIGHT)) >> ZBAR_FIXED;
-        y0_0f += ((y - y0_1f) * EWMA_WEIGHT_F);
+#else
+        y0_0 += (int)((y - y0_1) * EWMA_WEIGHT_F);
+#endif
         scn->y0[x & 3] = y0_0;
-        scn->y0f[x & 3] = y0_0f;
     }
-    else{
+    else
         y0_0  = y0_1  = scn->y0[0]  = scn->y0[1]  = scn->y0[2]  = scn->y0[3]  = y;
-        y0_0f = y0_1f = scn->y0f[0] = scn->y0f[1] = scn->y0f[2] = scn->y0f[3] = y;
-    }
+
     dump_avg(scn);
     y0_2 = scn->y0[(x - 2) & 3];
-    y0_2f = scn->y0f[(x - 2) & 3];
 
     y0_3 = scn->y0[(x - 3) & 3];
-    y0_3f = scn->y0f[(x - 3) & 3];
 
     /* 1st differential @ x-1 */
     y1_1  = y0_1  - y0_2;
-    y1_1f = y0_1f - y0_2f;
     {
         register int y1_2  = y0_2  - y0_3;
-        float        y1_2f = y0_2f - y0_3f;
         if((abs(y1_1) < abs(y1_2)) &&
            ((y1_1 >= 0) == (y1_2 >= 0)))
             y1_1 = y1_2;
-
-        if((fabsf(y1_1f) < fabsf(y1_2f)) &&
-                ((y1_1f >= 0) == (y1_2f >= 0)))
-            y1_1f = y1_2f;
     }
 
     /* 2nd differentials @ x-1 & x-2 */
     y2_1 = y0_0 - (y0_1 * 2) + y0_2;
     y2_2 = y0_1 - (y0_2 * 2) + y0_3;
-
-    //y2_1f = y0_0f - (y0_1f * 2) + y0_2f;
-    //y2_2f = y0_1f - (y0_2f * 2) + y0_3f;
 
     //dbprintf(1, "scan: x=%d y=%d y0=%d y1=%d y2=%d",
      //        x, y, y0_1, y1_1, y2_1);
